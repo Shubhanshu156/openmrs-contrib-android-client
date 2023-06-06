@@ -11,36 +11,29 @@
  *
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
+package org.openmrs.mobile.net
 
-package org.openmrs.mobile.net;
+import android.content.Intent
+import com.openmrs.android_sdk.library.OpenmrsAndroid
+import com.openmrs.android_sdk.utilities.ApplicationConstants
+import org.openmrs.mobile.activities.login.LoginActivity
+import org.openmrs.mobile.application.OpenMRS
 
-import android.content.Intent;
+class AuthorizationManager {
+    private val mOpenMRS: OpenMRS = OpenMRS.getInstance()
 
-import com.openmrs.android_sdk.library.OpenmrsAndroid;
-import com.openmrs.android_sdk.utilities.ApplicationConstants;
-
-import org.openmrs.mobile.activities.login.LoginActivity;
-import org.openmrs.mobile.application.OpenMRS;
-
-public class AuthorizationManager {
-    protected OpenMRS mOpenMRS = OpenMRS.getInstance();
-
-    public boolean isUserNameOrServerEmpty() {
-        boolean result = false;
-        if (OpenmrsAndroid.getUsername().equals(ApplicationConstants.EMPTY_STRING) ||
-            (OpenmrsAndroid.getServerUrl().equals(ApplicationConstants.EMPTY_STRING))) {
-            result = true;
-        }
-        return result;
+    fun isUserNameOrServerEmpty(): Boolean {
+        return OpenmrsAndroid.getUsername() == ApplicationConstants.EMPTY_STRING ||
+                OpenmrsAndroid.getServerUrl() == ApplicationConstants.EMPTY_STRING
     }
 
-    public boolean isUserLoggedIn() {
-        return !ApplicationConstants.EMPTY_STRING.equals(OpenmrsAndroid.getSessionToken());
+    fun isUserLoggedIn(): Boolean {
+        return OpenmrsAndroid.getSessionToken() != ApplicationConstants.EMPTY_STRING
     }
 
-    public void moveToLoginActivity() {
-        Intent intent = new Intent(mOpenMRS.getApplicationContext(), LoginActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        mOpenMRS.getApplicationContext().startActivity(intent);
+    fun moveToLoginActivity() {
+        val intent = Intent(mOpenMRS.applicationContext, LoginActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        mOpenMRS.applicationContext.startActivity(intent)
     }
 }
